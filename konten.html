@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kelola Konten | ObyShop Admin</title>
+  <link rel="stylesheet" href="css/admin-style.css">
+  <style>
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body class="dashboard">
+  <div class="sidebar">
+    <h2>ObyShop Admin</h2>
+    <ul>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="produk.html">Kelola Produk</a></li>
+      <li><a href="konten.html" class="active">Kelola Konten</a></li>
+      <li><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </div>
+
+  <div class="content">
+    <h1>Edit Konten Website</h1>
+    <form id="kontenForm">
+      <!-- ================= HERO ================= -->
+      <h3>Hero Section</h3>
+      <label>Judul Hero</label>
+      <input type="text" id="heroTitle" name="heroTitle" placeholder="Judul Hero" required />
+
+      <label>Subjudul Hero</label>
+      <input type="text" id="heroSubtitle" name="heroSubtitle" placeholder="Subjudul Hero" required />
+
+      <label>Warna Judul</label>
+      <input type="color" id="heroTitleColor" name="heroTitleColor" />
+
+      <label>Warna Subjudul</label>
+      <input type="color" id="heroSubtitleColor" name="heroSubtitleColor" />
+
+      <label>Background Hero (Upload)</label>
+      <input type="file" id="heroBackgroundUpload" name="heroBackgroundUpload" accept="image/*" />
+      <img id="heroPreview" style="max-height:120px;" alt="Preview Hero" />
+      <input type="text" id="heroBackgroundImage" name="heroBackgroundImage" readonly />
+
+      <hr>
+
+      <!-- ================= KONTAK ================= -->
+      <h3>Kontak</h3>
+      <label>No. Telepon / WhatsApp</label>
+      <input type="text" id="contactPhone" name="contactPhone" placeholder="Nomor Telepon / WA" required />
+
+      <label>Email</label>
+      <input type="email" id="contactEmail" name="contactEmail" placeholder="Email Kontak" required />
+
+      <label>Alamat</label>
+      <input type="text" id="contactAddress" name="contactAddress" placeholder="Alamat" required />
+
+      <hr>
+
+      <!-- ================= SOSMED ================= -->
+      <h3>Link Media Sosial</h3>
+      <label>Instagram</label>
+      <input type="url" id="instagramLink" name="instagramLink" placeholder="Link Instagram" />
+
+      <label>Facebook</label>
+      <input type="url" id="facebookLink" name="facebookLink" placeholder="Link Facebook" />
+
+      <label>TikTok</label>
+      <input type="url" id="tiktokLink" name="tiktokLink" placeholder="Link TikTok" />
+
+      <hr>
+
+      <!-- ================= WHATSAPP ================= -->
+      <h3>WhatsApp</h3>
+      <label>Nomor Tombol Kontak WhatsApp</label>
+      <input type="text" id="waContact" name="waContact" placeholder="Nomor untuk Tombol Kontak" />
+
+      <label>Nomor Gelembung WhatsApp</label>
+      <input type="text" id="waBubble" name="waBubble" placeholder="Nomor untuk Gelembung WhatsApp" />
+
+      <hr>
+
+      <!-- ================= TEMA ================= -->
+      <h3>Tema Website</h3>
+      <label>Warna Utama</label>
+      <input type="color" id="primaryColor" name="primaryColor" />
+
+      <label>Warna Background Website</label>
+      <input type="color" id="backgroundColor" name="backgroundColor" />
+
+      <button type="submit">💾 Simpan Perubahan</button>
+    </form>
+  </div>
+
+  <script src="js/konten.js"></script>
+
+  <script>
+    function logout() {
+      localStorage.removeItem("token");
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>

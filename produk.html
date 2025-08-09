@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kelola Produk | ObyShop Admin</title>
+  <link rel="stylesheet" href="css/admin-style.css" />
+</head>
+<body class="dashboard">
+  <div class="sidebar">
+    <h2>ObyShop Admin</h2>
+    <ul>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="produk.html" class="active">Kelola Produk</a></li>
+      <li><a href="konten.html">Kelola Konten</a></li>
+      <li><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </div>
+
+  <div class="content">
+    <h1>Kelola Produk</h1>
+
+    <!-- FORM TAMBAH PRODUK -->
+    <form id="formProduk" enctype="multipart/form-data">
+      <label>Nama Produk</label>
+      <input type="text" name="nama" required />
+
+      <label>Harga</label>
+      <input type="number" name="harga" required />
+
+      <!-- Kategori dihapus -->
+
+      <label>Deskripsi</label>
+      <textarea name="deskripsi"></textarea>
+
+      <label>Upload Gambar Produk</label>
+      <input type="file" name="image" accept="image/*" required />
+
+      <label><input type="checkbox" name="produkBaru"> Tandai sebagai Produk Baru</label>
+      <label><input type="checkbox" name="produkUtama"> Tandai sebagai Produk Utama</label>
+
+      <button type="submit">Simpan Produk</button>
+    </form>
+
+    <hr />
+
+    <!-- FORM PENCARIAN -->
+    <div style="margin-bottom: 15px;">
+      <input type="text" id="searchInput" placeholder="Cari nama produk..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #ccc;" />
+    </div>
+
+    <h2>Daftar Produk</h2>
+    <div id="produkList"></div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem("token");
+    if (!token) location.href = "login.html";
+
+    const list = document.getElementById("produkList");
+    const form = document.getElementById("formProduk");
+    const searchInput = document.getElementById("searchInput");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      formData.append("produkBaru", form.produkBaru.checked);
+      formData.append("produkUtama", form.produkUtama.checked);
+
+      try {
+        const res = await fetch("http://localhost:5000/api/products", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          alert("✅ Produk berhasil ditambahkan!");
+          form.reset();
+          loadProduk();
+        } else {
+          alert(data.error || "❌ Gagal menambahkan produk.");
+        }
+      } catch (err) {
+        console.error("❌ Error:", err);
+        alert("Terjadi kesalahan saat mengirim data.");
+      }
+    });
+
+    async function loadProduk(q = "") {
+      const url = q ? `http://localhost:5000/api/products?q=${encodeURIComponent(q)}` : "http://localhost:5000/api/products";
+      const res = await fetch(url);
+      const data = await res.json();
+      list.innerHTML = "";
+
+      if (data.length === 0) {
+        list.innerHTML = "<p>Tidak ada produk ditemukan.</p>";
+        return;
+      }
+
+      data.forEach((p) => {
+        const div = document.createElement("div");
+        div.style.marginBottom = "10px";
+        div.innerHTML = `
+          <div style="padding: 10px; background: #fff; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong>${p.nama}</strong><br />
+              <small>Rp${p.harga.toLocaleString()}</small><br />
+              <small>${p.produkBaru ? "🆕 Produk Baru" : ""} ${p.produkUtama ? "⭐ Produk Utama" : ""}</small>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <img src="http://localhost:5000/uploads/products/${p.imageFilename}" alt="${p.nama}" style="height: 50px; border-radius: 5px;" />
+              <button onclick="hapusProduk('${p._id}')" style="background:#e74c3c; color:#fff; border:none; padding:6px 10px; border-radius:5px; cursor:pointer;">Hapus</button>
+            </div>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    async function hapusProduk(id) {
+      if (!confirm("Yakin ingin menghapus produk ini?")) return;
+
+      try {
+        const res = await fetch(`http://localhost:5000/api/products/${id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (res.ok) {
+          alert("Produk berhasil dihapus!");
+          loadProduk(searchInput.value);
+        } else {
+          alert("Gagal menghapus produk.");
+        }
+      } catch (err) {
+        console.error("❌ Error saat hapus:", err);
+        alert("Gagal terhubung ke server.");
+      }
+    }
+
+    // Event pencarian
+    searchInput.addEventListener("input", () => {
+      loadProduk(searchInput.value);
+    });
+
+    function logout() {
+      localStorage.removeItem("token");
+      location.href = "login.html";
+    }
+
+    loadProduk();
+  </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin | ObyShop</title>
+  <link rel="stylesheet" href="css/admin-style.css">
+</head>
+<body class="dashboard">
+  <div class="sidebar">
+    <h2>ObyShop Admin</h2>
+    <ul>
+      <li><a href="dashboard.html" class="active">Dashboard</a></li>
+      <li><a href="produk.html">Kelola Produk</a></li>
+      <li><a href="konten.html">Kelola Konten</a></li>
+      <li><a href="#" onclick="logout()">Logout</a></li>
+    </ul>
+  </div>
+
+  <div class="content">
+    <h1>Selamat Datang, Admin!</h1>
+    <p>Gunakan menu di samping untuk mengelola konten dan produk yang tampil di website ObyShop.</p>
+
+    <div style="margin-top: 40px;">
+      <h2>Ringkasan</h2>
+      <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+        <div style="flex: 1; min-width: 220px; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
+          <h3>Total Produk</h3>
+          <p id="total-produk" style="font-size: 32px; font-weight: bold; color: #b6895b;">0</p>
+        </div>
+        <div style="flex: 1; min-width: 220px; background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
+          <h3>Konten Aktif</h3>
+          <p style="font-size: 32px; font-weight: bold; color: #b6895b;">✓</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function logout() {
+      localStorage.removeItem("token");
+      location.href = "login.html";
+    }
+
+    async function loadSummary() {
+      try {
+        const produkRes = await fetch("http://localhost:5000/api/products");
+        const produkData = await produkRes.json();
+        document.getElementById("total-produk").textContent = produkData.length;
+
+      } catch (err) {
+        console.error("Gagal mengambil data ringkasan", err);
+      }
+    }
+
+    loadSummary();
+  </script>
+</body>
+</html>
